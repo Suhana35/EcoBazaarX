@@ -128,23 +128,6 @@ const AdminNavbar = () => {
 
             {/* Right Side - Desktop */}
             <div className="hidden md:flex items-center gap-4">
-              {/* Cart */}
-              {/* <Link
-                to="/cart"
-                className="relative p-3 hover:bg-white/10 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50"
-                aria-label={`Shopping cart with ${cartCount} items`}
-              >
-                <FiShoppingCart size={22} aria-hidden="true" />
-                {cartCount > 0 && (
-                  <span 
-                    className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-xs px-2 py-1 rounded-full font-bold shadow-lg min-w-[20px] text-center animate-pulse"
-                    aria-label={`${cartCount} items in cart`}
-                  >
-                    {cartCount > 99 ? '99+' : cartCount}
-                  </span>
-                )}
-              </Link> */}
-
               {/* User Section */}
               {!currentUser ? (
                 <div className="flex items-center gap-3">
@@ -195,23 +178,8 @@ const AdminNavbar = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center gap-3">
-              {/* Mobile Cart */}
-              {/* <Link
-                to="/cart"
-                className="relative p-2 hover:bg-white/10 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50"
-                aria-label={`Shopping cart with ${cartCount} items`}
-              >
-                <FiShoppingCart size={20} aria-hidden="true" />
-                {cartCount > 0 && (
-                  <span 
-                    className="absolute -top-1 -right-1 bg-red-500 text-xs px-1.5 py-0.5 rounded-full font-bold text-[10px] min-w-[16px] text-center"
-                    aria-label={`${cartCount} items`}
-                  >
-                    {cartCount > 9 ? '9+' : cartCount}
-                  </span>
-                )}
-              </Link> */}
-
+           
+             
               <button
                 onClick={toggleMobileMenu}
                 className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50"
