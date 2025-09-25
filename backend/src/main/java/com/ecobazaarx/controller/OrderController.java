@@ -39,14 +39,7 @@ public class OrderController {
         return jwtUtils.getUserIdFromJwtToken(token);
     }
     
-//    @PostMapping
-//    @PreAuthorize("hasRole('CONSUMER') or hasRole('ADMIN')")
-//    public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody CreateOrderRequest createOrderRequest,
-//                                              HttpServletRequest request) {
-//        Long userId = getUserIdFromRequest(request);
-//        OrderDto order = orderService.createOrderFromCart(userId, createOrderRequest);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(order);
-//    }
+
     
     @PostMapping
     @PreAuthorize("hasRole('CONSUMER')")
