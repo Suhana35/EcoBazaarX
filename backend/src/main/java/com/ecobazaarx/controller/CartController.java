@@ -31,11 +31,7 @@ public class CartController {
         this.jwtUtils = jwtUtils;
     }
     
-//    private Long getUserIdFromRequest(HttpServletRequest request) {
-//        String token = jwtUtils.parseJwt(request);
-//        String username = jwtUtils.getUserNameFromJwtToken(token);
-//        return jwtUtils.getUserIdFromJwtToken(token); // You'll need to implement this method in JwtUtils
-//    }
+
     private Long getUserIdFromRequest(HttpServletRequest request) {
         String token = jwtUtils.parseJwt(request);
         return jwtUtils.getUserIdFromJwtToken(token);
@@ -48,14 +44,7 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
     
-//    @PostMapping("/add")
-//    public ResponseEntity<CartDto> addToCart(@Valid @RequestBody AddToCartRequest addToCartRequest,
-//                                           HttpServletRequest request) {
-//        Long userId = getUserIdFromRequest(request);
-//        System.out.println("User Id : " + getUserIdFromRequest(request));
-//        CartDto cart = cartService.addToCart(userId, addToCartRequest);
-//        return ResponseEntity.ok(cart);
-//    }
+
     @PostMapping("/add")
     public ResponseEntity<CartDto> addToCart(@Valid @RequestBody AddToCartRequest addToCartRequest,
                                            HttpServletRequest request) {
