@@ -18,9 +18,7 @@ public class OrderDto {
     private LocalDateTime deliveredDate;
     private BigDecimal totalEcoScore;
     private BigDecimal totalCO2Footprint;
-//    private String shippingAddress;
-//    private String billingAddress;
-//    private String notes;
+
     
     // Constructors
     public OrderDto() {}
@@ -61,13 +59,5 @@ public class OrderDto {
     
     public BigDecimal getTotalCO2Footprint() { return totalCO2Footprint; }
     public void setTotalCO2Footprint(BigDecimal totalCO2Footprint) { this.totalCO2Footprint = totalCO2Footprint; }
-    
-//    public String getShippingAddress() { return shippingAddress; }
-//    public void setShippingAddress(String shippingAddress) { this.shippingAddress = shippingAddress; }
-//    
-//    public String getBillingAddress() { return billingAddress; }
-//    public void setBillingAddress(String billingAddress) { this.billingAddress = billingAddress; }
-//    
-//    public String getNotes() { return notes; }
-//    public void setNotes(String notes) { this.notes = notes; }
+
 }
