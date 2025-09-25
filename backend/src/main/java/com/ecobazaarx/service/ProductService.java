@@ -276,7 +276,6 @@ public class ProductService {
         return productMapper.toDto(updatedProduct);
     }
 
-    // ================= SELLER-SPECIFIC DELETE =================
     public void deleteProductBySeller(Long productId, Long sellerId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
