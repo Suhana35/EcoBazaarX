@@ -333,30 +333,7 @@ public class OrderService {
                      .collect(Collectors.toList());
     }
 
-//    public OrderDto updateOrderStatusBySeller(Long orderId, Long sellerId, OrderStatus newStatus) throws AccessDeniedException {
-//        Order order = orderRepository.findById(orderId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-//
-//        // Ensure all order items belong to the seller
-//        boolean ownsOrder = order.getOrderItems().stream()
-//                .allMatch(item -> item.getProduct().getSeller().getId().equals(sellerId));
-//
-//        if (!ownsOrder) {
-//            throw new AccessDeniedException("You are not allowed to update this order");
-//        }
-//
-//        // (Optional) Restrict seller-updatable statuses
-//        if (!(newStatus == OrderStatus.PROCESSING ||
-//              newStatus == OrderStatus.SHIPPED ||
-//              newStatus == OrderStatus.CANCELLED)) {
-//            throw new IllegalArgumentException("Seller cannot set status: " + newStatus);
-//        }
-//
-//        order.setStatus(newStatus);
-//        orderRepository.save(order);
-//
-//        return orderMapper.toDto(order);
-//    }
+
     public OrderDto updateOrderStatusBySeller(Long orderId, Long sellerId, OrderStatus newStatus) throws AccessDeniedException {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
