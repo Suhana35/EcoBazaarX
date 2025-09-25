@@ -48,20 +48,7 @@ function Login() {
     return Object.keys(tempErrors).length === 0;
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (!validate()) return;
-
-  //   setLoading(true);
-  //   setTimeout(() => {
-  //     const success = loginUser(formData.email, formData.password);
-
-  //     if (!success) {
-  //       setErrors({ general: "Invalid email or password. Please try again." });
-  //     }
-  //     setLoading(false);
-  //   }, 1200);
-  // };
+  
 
   const handleSubmit = async (e) => {
   e.preventDefault();
