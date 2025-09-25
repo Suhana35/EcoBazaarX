@@ -1,6 +1,6 @@
 import React from "react";
 import { FaUser, FaEnvelope, FaShieldAlt, FaUserCheck, FaCrown, FaShoppingBag } from "react-icons/fa";
-import { useGlobal } from "./context/GlobalContext"; // ✅ use real context
+import { useGlobal } from "./context/GlobalContext"; 
 
 // Role-based styling and icons
 const getRoleConfig = (role) => {
