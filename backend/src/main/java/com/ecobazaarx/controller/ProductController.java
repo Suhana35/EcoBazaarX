@@ -147,7 +147,6 @@ public class ProductController {
         return ResponseEntity.ok(types);
     }
     
-    // ================= ADMIN / SELLER ENDPOINTS =================
     
     
     
@@ -168,7 +167,7 @@ public class ProductController {
         return ResponseEntity.ok(updatedProduct);
     }
     
-    // ✅ New: Update product status (active/inactive/archived)
+
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     public ResponseEntity<ProductDto> updateProductStatus(@PathVariable Long id,
@@ -177,7 +176,6 @@ public class ProductController {
         return ResponseEntity.ok(updatedProduct);
     }
 
-    // ✅ New: Update product rating (optional, if ratings are calculated via reviews you can skip this)
     @PatchMapping("/{id}/rating")
     @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     public ResponseEntity<ProductDto> updateProductRating(@PathVariable Long id,
