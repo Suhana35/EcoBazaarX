@@ -14,29 +14,29 @@ const ProductCart = () => {
   const [checkoutQty, setCheckoutQty] = useState(1);
   const [savedForLater, setSavedForLater] = useState([]);
 
-  // Fixed quantity update - use item.id (cart item ID)
+  // quantity update - use item.id (cart item ID)
   const updateQuantity = (cartItemId, qty) => {
     updateCartItem(cartItemId, Math.max(1, qty));
   };
 
-  // Fixed remove product - use item.id (cart item ID)  
+  // remove product - use item.id (cart item ID)  
   const removeProduct = cartItemId => {
     removeFromCart(cartItemId);
   };
 
-  // Fixed save for later - use entire cart item
+  // save for later - use entire cart item
   const saveForLater = (cartItem) => {
     setSavedForLater(prev => [...prev, cartItem]);
     removeProduct(cartItem.id); // Use cart item ID
   };
 
-  // Fixed move to cart - use product from cart item
+  // move to cart - use product from cart item
   const moveToCart = (cartItem) => {
     addToCart(cartItem.product, 1); // Use the product object
     setSavedForLater(prev => prev.filter(item => item.id !== cartItem.id));
   };
 
-  // Fixed checkout handler
+  // checkout handler
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
     
@@ -64,7 +64,7 @@ const ProductCart = () => {
     setShowCheckout(true);
   };
 
-  // Fixed calculations - access product data correctly
+  // calculations - access product data correctly
   const subtotal = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
   const shipping = subtotal > 50 ? 0 : 5.99;
   const totalCost = subtotal + shipping;
