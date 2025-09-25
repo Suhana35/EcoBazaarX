@@ -62,7 +62,6 @@ public class AuthController {
 		
 		String jwt = jwtUtils.generateJwtToken(user.getUsername(), user.getId(), user.getRole().name());
 
-//        User user = (User) authentication.getPrincipal();
 
 		return ResponseEntity.ok(new JwtResponse(jwt, user.getId(), user.getName(), user.getEmail(), user.getRole()));
 	}
@@ -85,15 +84,7 @@ public class AuthController {
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 
-//    @GetMapping("/me")
-//    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
-//        if (authentication == null) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("No authentication found"));
-//        }
-//
-//        User user = (User) authentication.getPrincipal();
-//        return ResponseEntity.ok(new JwtResponse("", user.getId(), user.getName(), user.getEmail(), user.getRole()));
-//    }
+
 
 	@GetMapping("/me")
 	@PreAuthorize("isAuthenticated()")
@@ -111,10 +102,10 @@ public class AuthController {
 		List<UserDto> users = userService.getAllUsers();
 
 		if (users.isEmpty()) {
-			return ResponseEntity.noContent().build(); // 204 No Content
+			return ResponseEntity.noContent().build(); 
 		}
 
-		return ResponseEntity.ok(users); // 200 OK with body
+		return ResponseEntity.ok(users); 
 	}
 
 	@PatchMapping("/admin/{id}/status")
