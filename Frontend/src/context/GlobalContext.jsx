@@ -19,7 +19,7 @@ const defaultProducts = [
     shippingCO2: 5.0,
     image: "https://images.unsplash.com/photo-1587202372775-98927bbee07f?w=600",
     date: new Date().toISOString(),
-    stockQuantity: 50, // Fixed: was 'quantity'
+    stockQuantity: 50, 
     sellerId: 101,
     sellerName: "EcoTech Pvt Ltd",
     status: "active",
@@ -38,7 +38,7 @@ const defaultProducts = [
     shippingCO2: 0.7,
     image: "https://images.unsplash.com/photo-1606813902911-08fa33d68a07?w=600",
     date: new Date().toISOString(),
-    stockQuantity: 120, // Fixed: was 'quantity'
+    stockQuantity: 120, 
     sellerId: 102,
     sellerName: "GreenLiving Store",
     status: "active",
