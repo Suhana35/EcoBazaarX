@@ -70,8 +70,7 @@ const ProductDetails = () => {
           notification.remove();
         }, 3000);
 
-        // Optionally navigate to orders page
-        // navigate("/orders");
+       
       } else {
         // Handle error
         alert(`Failed to place order: ${result.message}`);
