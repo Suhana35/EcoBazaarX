@@ -19,7 +19,7 @@ const defaultProducts = [
     shippingCO2: 5.0,
     image: "https://images.unsplash.com/photo-1587202372775-98927bbee07f?w=600",
     date: new Date().toISOString(),
-    stockQuantity: 50, 
+    stockQuantity: 50, // Fixed: was 'quantity'
     sellerId: 101,
     sellerName: "EcoTech Pvt Ltd",
     status: "active",
@@ -38,7 +38,7 @@ const defaultProducts = [
     shippingCO2: 0.7,
     image: "https://images.unsplash.com/photo-1606813902911-08fa33d68a07?w=600",
     date: new Date().toISOString(),
-    stockQuantity: 120, 
+    stockQuantity: 120, // Fixed: was 'quantity'
     sellerId: 102,
     sellerName: "GreenLiving Store",
     status: "active",
@@ -78,7 +78,7 @@ export const Authenticate = ({ children }) => {
   // Utility function for API requests with better error handling
   const makeAuthenticatedRequest = async (url, options = {}) => {
     const token = localStorage.getItem('token');
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}${url}`, {
         ...options,
@@ -111,7 +111,7 @@ export const Authenticate = ({ children }) => {
     try {
       setError(null);
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         setProducts(defaultProducts);
         return;
@@ -140,7 +140,7 @@ export const Authenticate = ({ children }) => {
       const response = await axios.get(`${API_BASE_URL}/products/seller/${sellerId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       const products = response.data || defaultProducts;
       console.log(products);
       setProducts(products);
@@ -235,7 +235,7 @@ export const Authenticate = ({ children }) => {
   const addToCart = async (product, quantity = 1) => {
     try {
       const token = localStorage.getItem("token");
-      
+
       if (token) {
         await axios.post(
           `${API_BASE_URL}/cart/add`,
@@ -247,13 +247,13 @@ export const Authenticate = ({ children }) => {
         // Guest cart - store in localStorage for persistence
         const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
         const existingIndex = guestCart.findIndex(item => item.id === product.id);
-        
+
         if (existingIndex > -1) {
           guestCart[existingIndex].quantity += quantity;
         } else {
           guestCart.push({ ...product, quantity });
         }
-        
+
         localStorage.setItem('guestCart', JSON.stringify(guestCart));
         setCartItems(guestCart);
       }
@@ -265,10 +265,10 @@ export const Authenticate = ({ children }) => {
 
   const updateCartItem = async (cartItemId, quantity) => {
     if (quantity < 1) return;
-    
+
     try {
       const token = localStorage.getItem("token");
-      
+
       if (token) {
         await axios.put(
           `${API_BASE_URL}/cart/items/${cartItemId}`,
@@ -279,8 +279,8 @@ export const Authenticate = ({ children }) => {
       } else {
         // Update guest cart
         const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
-        const updatedCart = guestCart.map(item => 
-          item.id === cartItemId 
+        const updatedCart = guestCart.map(item =>
+          item.id === cartItemId
             ? { ...item, quantity: Math.max(1, quantity) }
             : item
         );
@@ -296,7 +296,7 @@ export const Authenticate = ({ children }) => {
   const removeFromCart = async (cartItemId) => {
     try {
       const token = localStorage.getItem("token");
-      
+
       if (token) {
         await axios.delete(`${API_BASE_URL}/cart/items/${cartItemId}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -318,7 +318,7 @@ export const Authenticate = ({ children }) => {
   const fetchCart = async () => {
     try {
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         // Load guest cart from localStorage
         const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
@@ -329,7 +329,7 @@ export const Authenticate = ({ children }) => {
       const response = await axios.get(`${API_BASE_URL}/cart`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       setCartItems(response.data.cartItems || []);
     } catch (error) {
       console.error("Error fetching cart:", error);
@@ -338,29 +338,29 @@ export const Authenticate = ({ children }) => {
   };
 
   const fetchAllUsers = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) throw new Error("Authentication required");
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Authentication required");
 
-    const response = await axios.get(`${API_BASE_URL}/auth/admin/users`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      const response = await axios.get(`${API_BASE_URL}/auth/admin/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    
-    return { success: true, users: response.data };
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    return {
-      success: false,
-      message: error.response?.data?.message || error.message,
-    };
-  }
-};
+
+      return { success: true, users: response.data };
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+      };
+    }
+  };
 
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         setOrders(sampleOrders);
         return;
@@ -369,7 +369,7 @@ export const Authenticate = ({ children }) => {
       const response = await axios.get(`${API_BASE_URL}/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       setOrders(response.data || []);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -380,7 +380,7 @@ export const Authenticate = ({ children }) => {
   const fetchAllOrders = async () => {
     try {
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         setOrders(sampleOrders);
         return;
@@ -389,7 +389,7 @@ export const Authenticate = ({ children }) => {
       const response = await axios.get(`${API_BASE_URL}/orders/all`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       setOrders(response.data || []);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -402,7 +402,7 @@ export const Authenticate = ({ children }) => {
     try {
       console.log("Fetching orders for seller:", sellerId);
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         throw new Error("Authentication required");
       }
@@ -410,7 +410,7 @@ export const Authenticate = ({ children }) => {
       const response = await axios.get(`${API_BASE_URL}/orders/seller`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       const orders = response.data || [];
       console.log("Seller orders:", orders);
       setOrders(orders);
@@ -463,11 +463,86 @@ export const Authenticate = ({ children }) => {
       return { success: false, message: error.message };
     }
   };
+  const updateOrderStatus = async (orderId, status) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Authentication required");
+
+      const response = await axios.patch(
+        `${API_BASE_URL}/orders/${orderId}/status?status=${status}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const updatedOrder = response.data;
+      setOrders((prev) =>
+        prev.map((order) => (order.id === orderId ? updatedOrder : order))
+      );
+
+      return { success: true, order: updatedOrder };
+    } catch (error) {
+      console.error("Error updating order status:", error);
+
+      // Extract error message from backend response
+      let errorMessage = "Failed to update order status";
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.data) {
+        errorMessage = typeof error.response.data === 'string'
+          ? error.response.data
+          : error.response.data.message || errorMessage;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    }
+  };
+
+  const cancelOrder = async (orderId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Authentication required");
+
+      const response = await axios.patch(
+        `${API_BASE_URL}/orders/${orderId}/cancel`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const updatedOrder = response.data;
+      setOrders((prev) =>
+        prev.map((order) => (order.id === orderId ? updatedOrder : order))
+      );
+
+      return { success: true, order: updatedOrder };
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+
+      // Extract error message from backend response
+      let errorMessage = "Failed to cancel order";
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.data) {
+        errorMessage = typeof error.response.data === 'string'
+          ? error.response.data
+          : error.response.data.message || errorMessage;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    }
+  };
 
   const placeOrderFromCart = async (orderDetails) => {
     try {
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         throw new Error("Authentication required");
       }
@@ -477,15 +552,15 @@ export const Authenticate = ({ children }) => {
         orderDetails,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       setOrders((prev) => [...prev, response.data]);
-      
+
       // Clear cart after successful order
       setCartItems([]);
       if (!token) {
         localStorage.removeItem('guestCart');
       }
-      
+
       return { success: true, order: response.data };
     } catch (error) {
       console.error("Error placing order from cart:", error);
@@ -496,7 +571,7 @@ export const Authenticate = ({ children }) => {
   const placeOrderForProduct = async (productId, quantity, orderDetails) => {
     try {
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         throw new Error("Authentication required");
       }
@@ -506,7 +581,7 @@ export const Authenticate = ({ children }) => {
         orderDetails,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       setOrders((prev) => [...prev, response.data]);
       return { success: true, order: response.data };
     } catch (error) {
@@ -518,7 +593,7 @@ export const Authenticate = ({ children }) => {
   const getCurrentUser = async () => {
     try {
       const response = await makeAuthenticatedRequest('/auth/me');
-      
+
       if (response.ok) {
         const data = await response.json();
         const userData = {
@@ -527,7 +602,7 @@ export const Authenticate = ({ children }) => {
           email: data.email,
           role: (data.role || (Array.isArray(data.roles) ? data.roles[0] : "user")).toLowerCase()
         };
-        
+
         setCurrentUser(userData);
         return userData;
       }
@@ -557,7 +632,7 @@ export const Authenticate = ({ children }) => {
       });
 
       const data = await response.json();
-      return response.ok 
+      return response.ok
         ? { success: true, message: data.message }
         : { success: false, message: data.message };
     } catch (error) {
@@ -577,14 +652,14 @@ export const Authenticate = ({ children }) => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.accessToken);
-        
+
         const userData = {
           id: data.id,
           name: data.name,
           email: data.email,
           role: data.role.toLowerCase(),
         };
-        
+
         setCurrentUser(userData);
 
         // Load appropriate data based on user role
@@ -659,7 +734,7 @@ export const Authenticate = ({ children }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      
+
 
       return { success: true, user: response.data.data };
     } catch (error) {
@@ -669,25 +744,303 @@ export const Authenticate = ({ children }) => {
     }
   };
   const updateUserRole = async (uid, role) => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) throw new Error("Authentication required");
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Authentication required");
 
-    const response = await axios.patch(
-      `${API_BASE_URL}/auth/admin/${uid}/role?role=${role}`,
-      {}, // no body, just query param
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      const response = await axios.patch(
+        `${API_BASE_URL}/auth/admin/${uid}/role?role=${role}`,
+        {}, // no body, just query param
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    return { success: true, user: response.data.data };
-  } catch (error) {
-    console.error("Error updating user role:", error);
-    setError("Failed to update user role");
-    return { success: false, message: error.response?.data?.message || error.message };
-  }
-};
+      return { success: true, user: response.data.data };
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      setError("Failed to update user role");
+      return { success: false, message: error.response?.data?.message || error.message };
+    }
+  };
+
+  const updateUserProfile = async (updateData) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Authentication required");
+
+      // Prepare the request body
+      const requestBody = {
+        name: updateData.name,
+        email: updateData.email
+      };
+
+      // Only include password fields if new password is provided
+      if (updateData.newPassword) {
+        requestBody.currentPassword = updateData.currentPassword;
+        requestBody.newPassword = updateData.newPassword;
+      }
+
+      const response = await axios.put(
+        `${API_BASE_URL}/auth/profile`,
+        requestBody,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // CRITICAL FIX: If email was changed, backend returns a new JWT token
+      // We MUST update localStorage with the new token to prevent authentication errors
+      if (response.data.accessToken && response.data.accessToken !== "") {
+        localStorage.setItem('token', response.data.accessToken);
+        console.log("New JWT token saved after email change");
+      }
+
+      // Update current user state with new data
+      setCurrentUser(prev => ({
+        ...prev,
+        name: response.data.name || updateData.name,
+        email: response.data.email || updateData.email
+      }));
+
+      return { success: true, user: response.data };
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Failed to update profile";
+      return { success: false, message: errorMessage };
+    }
+  };
 
 
+
+
+  const fetchProductsForAnalytics = async () => {
+    try {
+      setError(null);
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return { success: false, message: "Authentication required" };
+      }
+
+      const response = await fetch(`${API_BASE_URL}/products`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return { success: true, products: Array.isArray(data) ? data : [] };
+    } catch (error) {
+      console.error('Error fetching products for analytics:', error);
+      setError('Failed to fetch products for analytics');
+      return { success: false, message: error.message };
+    }
+  };
+
+  // Fetch all orders for carbon analysis
+  const fetchOrdersForAnalytics = async () => {
+    try {
+      setError(null);
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return { success: false, message: "Authentication required" };
+      }
+
+      const response = await fetch(`${API_BASE_URL}/orders/all`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return { success: true, orders: Array.isArray(data) ? data : [] };
+    } catch (error) {
+      console.error('Error fetching orders for analytics:', error);
+      setError('Failed to fetch orders for analytics');
+      return { success: false, message: error.message };
+    }
+  };
+
+  // Fetch carbon analytics data (products and orders together)
+  const fetchCarbonAnalyticsData = async () => {
+    try {
+      setError(null);
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return { success: false, message: "Authentication required" };
+      }
+
+      const [productsRes, ordersRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/products`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }),
+        fetch(`${API_BASE_URL}/orders/all`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      ]);
+
+      if (!productsRes.ok || !ordersRes.ok) {
+        throw new Error('Failed to fetch analytics data');
+      }
+
+      const products = await productsRes.json();
+      const orders = await ordersRes.json();
+
+      return {
+        success: true,
+        products: Array.isArray(products) ? products : [],
+        orders: Array.isArray(orders) ? orders : []
+      };
+    } catch (error) {
+      console.error('Error fetching carbon analytics data:', error);
+      setError('Failed to fetch carbon analytics data');
+      return {
+        success: false,
+        message: error.message,
+        products: [],
+        orders: []
+      };
+    }
+  };
+
+  // Get high emission products
+  const getHighEmissionProducts = async (threshold = 10) => {
+    try {
+      const { success, products } = await fetchProductsForAnalytics();
+
+      if (!success) {
+        return { success: false, message: "Failed to fetch products" };
+      }
+
+      const highEmissionProducts = products.filter(p =>
+        ((p.materialCO2 || 0) + (p.shippingCO2 || 0)) > threshold
+      );
+
+      return { success: true, products: highEmissionProducts };
+    } catch (error) {
+      console.error('Error getting high emission products:', error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  // Get eco-friendly products
+  const getEcoFriendlyProducts = async (minScore = 4.0) => {
+    try {
+      const { success, products } = await fetchProductsForAnalytics();
+
+      if (!success) {
+        return { success: false, message: "Failed to fetch products" };
+      }
+
+      const ecoProducts = products
+        .filter(p => (p.ecoScore || 0) >= minScore)
+        .sort((a, b) => (b.ecoScore || 0) - (a.ecoScore || 0));
+
+      return { success: true, products: ecoProducts };
+    } catch (error) {
+      console.error('Error getting eco-friendly products:', error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  // Calculate carbon emissions by category
+  const getCarbonEmissionsByCategory = async () => {
+    try {
+      const { success, products } = await fetchProductsForAnalytics();
+
+      if (!success) {
+        return { success: false, message: "Failed to fetch products" };
+      }
+
+      const emissionsByCategory = {};
+      products.forEach(p => {
+        const category = p.type || 'Unknown';
+        const emissions = (p.materialCO2 || 0) + (p.shippingCO2 || 0);
+
+        if (!emissionsByCategory[category]) {
+          emissionsByCategory[category] = {
+            name: category,
+            totalEmissions: 0,
+            productCount: 0,
+            avgEmissions: 0,
+            materialCO2: 0,
+            shippingCO2: 0
+          };
+        }
+
+        emissionsByCategory[category].totalEmissions += emissions;
+        emissionsByCategory[category].productCount += 1;
+        emissionsByCategory[category].materialCO2 += p.materialCO2 || 0;
+        emissionsByCategory[category].shippingCO2 += p.shippingCO2 || 0;
+      });
+
+      Object.keys(emissionsByCategory).forEach(cat => {
+        emissionsByCategory[cat].avgEmissions =
+          emissionsByCategory[cat].totalEmissions / emissionsByCategory[cat].productCount;
+      });
+
+      return { success: true, categories: Object.values(emissionsByCategory) };
+    } catch (error) {
+      console.error('Error calculating emissions by category:', error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  // Get overall carbon metrics
+  const getCarbonMetrics = async () => {
+    try {
+      const { success, products, orders } = await fetchCarbonAnalyticsData();
+
+      if (!success) {
+        return { success: false, message: "Failed to fetch data" };
+      }
+
+      const totalMaterialCO2 = products.reduce((sum, p) => sum + (p.materialCO2 || 0), 0);
+      const totalShippingCO2 = products.reduce((sum, p) => sum + (p.shippingCO2 || 0), 0);
+      const totalEmissions = totalMaterialCO2 + totalShippingCO2;
+      const avgEcoScore = products.length > 0
+        ? products.reduce((sum, p) => sum + (p.ecoScore || 0), 0) / products.length
+        : 0;
+
+      const orderEmissions = orders.reduce((sum, order) => sum + (order.totalCO2Footprint || 0), 0);
+
+      return {
+        success: true,
+        metrics: {
+          totalMaterialCO2,
+          totalShippingCO2,
+          totalEmissions,
+          totalProductEmissions: totalEmissions,
+          totalOrderEmissions: orderEmissions,
+          avgEcoScore,
+          totalProducts: products.length,
+          totalOrders: orders.length
+        }
+      };
+    } catch (error) {
+      console.error('Error calculating carbon metrics:', error);
+      return { success: false, message: error.message };
+    }
+  };
 
 
   // Initialize app on mount
@@ -695,10 +1048,10 @@ export const Authenticate = ({ children }) => {
     const initializeApp = async () => {
       try {
         const token = localStorage.getItem('token');
-        
+
         if (token) {
           const user = await getCurrentUser();
-          
+
           if (user) {
             if (user.role === "consumer") {
               await Promise.all([fetchCart(), fetchProducts()]);
@@ -708,9 +1061,8 @@ export const Authenticate = ({ children }) => {
                 fetchOrdersBySeller(user.id)
               ]);
             }
-            else if(user.role==="admin")
-            {
-              await Promise.all([fetchProducts(),fetchAllOrders(),fetchAllUsers]);
+            else if (user.role === "admin") {
+              await Promise.all([fetchProducts(), fetchAllOrders(), fetchAllUsers]);
             }
           }
         } else {
@@ -740,7 +1092,7 @@ export const Authenticate = ({ children }) => {
     error,
     editingProduct,
     isEditMode,
-    
+
     // Setters
     setProducts,
     setCartItems,
@@ -748,13 +1100,13 @@ export const Authenticate = ({ children }) => {
     setEditingProduct,
     setIsEditMode,
     setError,
-    
+
     // Cart functions
     addToCart,
     updateCartItem,
     removeFromCart,
     fetchCart,
-    
+
     // Order functions
     addOrder,
     fetchOrders,
@@ -763,27 +1115,38 @@ export const Authenticate = ({ children }) => {
     placeOrderForProduct,
     updateOrderStatusBySeller,
     bulkUpdateOrdersStatus,
-    
+
     // Product functions
     addProduct,
     updateProduct,
     deleteProduct,
     fetchProducts,
     fetchProductsBySeller,
-    
+
     // Auth functions
     registerUser,
     loginUser,
     logoutUser,
     getCurrentUser,
-    
+    updateUserProfile,
+
     // Utility
     makeAuthenticatedRequest,
 
     fetchAllOrders,
     fetchAllUsers,
     updateUserStatus,
-    updateUserRole
+    updateOrderStatus,
+    cancelOrder,
+    updateUserRole,
+
+    fetchProductsForAnalytics,
+    fetchOrdersForAnalytics,
+    fetchCarbonAnalyticsData,
+    getHighEmissionProducts,
+    getEcoFriendlyProducts,
+    getCarbonEmissionsByCategory,
+    getCarbonMetrics
   };
 
   return (
