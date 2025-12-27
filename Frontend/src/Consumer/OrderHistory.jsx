@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGlobal } from "../context/GlobalContext";
 
 const OrderHistory = () => {
-  const { orders, fetchOrders, currentUser } = useGlobal();
+  const { orders, fetchOrders, currentUser, updateOrderStatus, cancelOrder } = useGlobal();
   const [isLoading, setIsLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
+  const [updatingOrderId, setUpdatingOrderId] = useState(null);
+  const [statusUpdateError, setStatusUpdateError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -25,16 +29,39 @@ const OrderHistory = () => {
     }
   };
   
-  // Mock navigate function for demo
-  const navigate = (path) => {
-    console.log(`Navigating to: ${path}`);
+  const navigate = useNavigate();
+
+  
+
+  // Handle status change with confirmation
+  const handleStatusChange = async (orderId, newStatus) => {
+    setUpdatingOrderId(orderId);
+    setStatusUpdateError(null);
+    setSuccessMessage(null);
+
+    try {
+      let result;
+      
+      if (newStatus === "cancelled") {
+        result = await cancelOrder(orderId);
+      } else {
+        result = await updateOrderStatus(orderId, newStatus);
+      }
+
+      if (result.success) {
+        setSuccessMessage(`Order status updated to ${newStatus}`);
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        setStatusUpdateError(result.message || "Failed to update order status");
+      }
+    } catch (error) {
+      setStatusUpdateError("An error occurred while updating the order");
+      console.error("Status update error:", error.response?.data);
+    } finally {
+      setUpdatingOrderId(null);
+    }
   };
 
-  const goToDetails = (id) => {
-    navigate(`/order/${id}`);
-  };
-
-  // Transform backend orders to component format
   const transformedOrders = (orders || []).map(order => {
     const orderItems = order.orderItems || [];
     const firstItem = orderItems[0] || {};
@@ -63,7 +90,6 @@ const OrderHistory = () => {
 
   const displayOrders = transformedOrders;
 
-  // Status configuration
   const statusConfig = {
     processing: {
       label: "Processing",
@@ -87,13 +113,16 @@ const OrderHistory = () => {
     }
   };
 
-  // Filter orders based on status
+  // Consumer can only change status if order is in "shipped" or "processing" state
+  const canChangeStatus = (status) => {
+    return ["shipped", "processing"].includes(status?.toLowerCase());
+  };
+
   const filteredOrders = displayOrders.filter(order => {
     if (filterStatus === "all") return true;
     return order.status === filterStatus;
   });
 
-  // Sort orders
   const sortedOrders = [...filteredOrders].sort((a, b) => {
     switch (sortBy) {
       case "newest":
@@ -173,6 +202,25 @@ const OrderHistory = () => {
         </div>
       </div>
 
+      {/* Alert Messages */}
+      {successMessage && (
+        <div className="max-w-6xl mx-auto px-4 mt-4">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+            <span className="text-green-600 text-xl">✓</span>
+            <p className="text-green-800 font-medium">{successMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {statusUpdateError && (
+        <div className="max-w-6xl mx-auto px-4 mt-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+            <span className="text-red-600 text-xl">!</span>
+            <p className="text-red-800 font-medium">{statusUpdateError}</p>
+          </div>
+        </div>
+      )}
+
       {/* Loading State */}
       {isLoading && (
         <div className="flex justify-center items-center py-16">
@@ -192,7 +240,7 @@ const OrderHistory = () => {
               <h3 className="text-2xl font-bold text-gray-800 mb-4">No Orders Yet</h3>
               <p className="text-gray-600 mb-6">Start your eco-friendly shopping journey today!</p>
               <button 
-                onClick={() => navigate('/products')}
+                onClick={() => navigate('/')}
                 className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 Start Shopping
@@ -276,14 +324,16 @@ const OrderHistory = () => {
               {sortedOrders.map((order) => (
                 <div
                   key={order.id}
-                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden cursor-pointer transform hover:-translate-y-1"
-                  onClick={() => goToDetails(order.id)}
+                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden"
                 >
                   <div className="p-6">
                     <div className="flex flex-col md:flex-row gap-6">
                       {/* Product Image */}
                       <div className="flex-shrink-0">
-                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-xl overflow-hidden bg-gradient-to-br from-sky-100 to-blue-100 shadow-inner">
+                        <div 
+                          className="w-32 h-32 md:w-40 md:h-40 rounded-xl overflow-hidden bg-gradient-to-br from-sky-100 to-blue-100 shadow-inner cursor-pointer"
+                          
+                        >
                           <img
                             src={order.image}
                             alt={order.name}
@@ -297,15 +347,16 @@ const OrderHistory = () => {
 
                       {/* Order Details */}
                       <div className="flex-1 space-y-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="text-xl font-bold text-gray-800 mb-1">{order.name}</h3>
+                        <div className="flex justify-between items-start gap-4">
+                          <div  className="cursor-pointer flex-1">
+                            <h3 className="text-xl font-bold text-gray-800 mb-1 hover:text-sky-600 transition-colors">{order.name}</h3>
                             {order.orderItems.length > 1 && (
                               <p className="text-sm text-gray-600">
                                 {order.orderItems.map(item => item.productName).join(', ')}
                               </p>
                             )}
                           </div>
+                          
                           <span className={`${statusConfig[order.status]?.color || 'bg-gray-500'} text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1`}>
                             <span>{statusConfig[order.status]?.icon || '❓'}</span>
                             {statusConfig[order.status]?.label || order.status}
@@ -395,27 +446,28 @@ const OrderHistory = () => {
                             {formatDate(order.date)}
                           </div>
                           
-                          <div className="flex gap-2">
-                            {order.status === "shipped" && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  console.log("Track order:", order.trackingNumber);
+                          <div className="flex gap-2 items-center">
+                            {canChangeStatus(order.status) && (
+                              <select
+                                value=""
+                                onChange={(e) => {
+                                  if (e.target.value) {
+                                    handleStatusChange(order.id, e.target.value);
+                                    e.target.value = "";
+                                  }
                                 }}
-                                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg text-sm"
+                                disabled={updatingOrderId === order.id}
+                                className="appearance-none bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer pr-8"
                               >
-                                Track Order
-                              </button>
+                                <option value="" className="text-gray-800">Update Status</option>
+                                {order.status !== "delivered" && (
+                                  <option value="delivered" className="text-gray-800">Mark as Delivered</option>
+                                )}
+                                {order.status !== "cancelled" && (
+                                  <option value="cancelled" className="text-gray-800">Cancel Order</option>
+                                )}
+                              </select>
                             )}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                goToDetails(order.id);
-                              }}
-                              className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg text-sm"
-                            >
-                              View Details
-                            </button>
                           </div>
                         </div>
                       </div>

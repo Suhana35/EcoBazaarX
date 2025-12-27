@@ -8,7 +8,6 @@ import {
   FiTrash2, 
   FiPlus,
   FiSearch,
-  FiDollarSign,
   FiAlertTriangle,
   FiX
 } from "react-icons/fi";
@@ -535,7 +534,6 @@ const SellerDashboard = () => {
                       
                       <div className="text-center lg:text-left">
                         <div className="flex items-center gap-1 text-gray-600 mb-1">
-                          <FiDollarSign className="text-green-500" size={16} />
                           <span className="text-sm font-medium">Price</span>
                         </div>
                         <div className="text-xl font-bold text-gray-800">₹{(product.price || 0).toLocaleString()}</div>

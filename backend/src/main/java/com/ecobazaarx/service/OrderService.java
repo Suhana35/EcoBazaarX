@@ -361,6 +361,50 @@ public class OrderService {
 
         return orderMapper.toDto(order);
     }
+    
+    public OrderDto updateConsumerOrderStatus(Long orderId, Long userId, OrderStatus newStatus) 
+            throws AccessDeniedException {
+        
+        // Get the order
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
+
+        // Verify that the user is the consumer of the order
+        if (!order.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("You don't have permission to update this order");
+        }
+
+        // Check current status - consumer can only change if order is in shipped or processing
+        OrderStatus currentStatus = order.getStatus();
+        if (!currentStatus.equals(OrderStatus.SHIPPED) && !currentStatus.equals(OrderStatus.PROCESSING)) {
+            throw new IllegalStateException(
+                "Order status cannot be changed from " + currentStatus + 
+                ". Orders can only be marked as delivered or cancelled if they are in processing or shipped status."
+            );
+        }
+
+        // Check if trying to cancel - can cancel from processing or shipped
+        if (newStatus.equals(OrderStatus.CANCELLED)) {
+            order.setStatus(OrderStatus.CANCELLED);
+//            order.setCancelledDate(LocalDateTime.now());
+            // Restore product stock when cancelled
+            restoreProductStock(order);
+        }
+        // Check if trying to mark as delivered - can deliver from shipped only
+        else if (newStatus.equals(OrderStatus.DELIVERED)) {
+            if (!currentStatus.equals(OrderStatus.SHIPPED)) {
+                throw new IllegalStateException("Order can only be marked as delivered if it's already shipped");
+            }
+            order.setStatus(OrderStatus.DELIVERED);
+            order.setDeliveredDate(LocalDateTime.now());
+        }
+        else {
+            throw new IllegalStateException("Invalid status transition. Consumers can only mark orders as delivered or cancelled.");
+        }
+
+        Order updatedOrder = orderRepository.save(order);
+        return orderMapper.toDto(updatedOrder);
+    }
 
 
 

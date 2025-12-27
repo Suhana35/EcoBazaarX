@@ -19,7 +19,6 @@ const CheckOut = ({ show, product, quantity, onConfirm, onClose }) => {
 
   const totalPrice = product.price * quantity;
   const totalCarbonFootprint = (product.materialCO2 + product.shippingCO2) * quantity;
-  const ecoPoints = Math.round(totalCarbonFootprint * 0.1);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -118,15 +117,9 @@ const CheckOut = ({ show, product, quantity, onConfirm, onClose }) => {
                 </svg>
                 Environmental Impact
               </h5>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="text-center">
-                  <div className="text-base font-bold text-orange-600">{totalCarbonFootprint.toFixed(1)}</div>
-                  <div className="text-gray-600 text-xs">kg CO₂ footprint</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-base font-bold text-blue-600">{ecoPoints}</div>
-                  <div className="text-gray-600 text-xs">Eco Points earned</div>
-                </div>
+              <div className="text-center">
+                <div className="text-base font-bold text-orange-600">{totalCarbonFootprint.toFixed(1)}</div>
+                <div className="text-gray-600 text-xs">kg CO₂ footprint</div>
               </div>
             </div>
           </div>

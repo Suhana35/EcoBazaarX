@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.ecobazaarx.dto.UpdateProfileDto;
 import com.ecobazaarx.dto.UserDto;
 import com.ecobazaarx.entity.Status;
 import com.ecobazaarx.entity.User;
@@ -145,5 +146,77 @@ public class AuthController {
 	    }
 	}
 
+	// ADD THIS METHOD TO YOUR AuthController.java FILE
 
+<<<<<<< HEAD
 }
+=======
+	@PutMapping("/profile")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<?> updateProfile(
+	        @Valid @RequestBody UpdateProfileDto updateRequest,
+	        Authentication authentication) {
+	    
+	    try {
+	        User currentUser = (User) authentication.getPrincipal();
+	        
+	        // Get user from database
+	        User user = userRepository.findById(currentUser.getId())
+	                .orElseThrow(() -> new RuntimeException("User not found"));
+	        
+	        boolean emailChanged = false;
+	        
+	        // Check if email is being changed and if it's already in use by another user
+	        if (!user.getEmail().equals(updateRequest.getEmail())) {
+	            if (userRepository.existsByEmail(updateRequest.getEmail())) {
+	                return ResponseEntity.badRequest()
+	                        .body(new MessageResponse("Email is already in use by another account"));
+	            }
+	            user.setEmail(updateRequest.getEmail());
+	            emailChanged = true;
+	        }
+	        
+	        // Update name
+	        if (updateRequest.getName() != null && !updateRequest.getName().trim().isEmpty()) {
+	            user.setName(updateRequest.getName().trim());
+	        }
+	        
+	        // Update password if provided
+	        if (updateRequest.getNewPassword() != null && !updateRequest.getNewPassword().isEmpty()) {
+	            // Verify current password
+	            if (updateRequest.getCurrentPassword() == null || 
+	                !encoder.matches(updateRequest.getCurrentPassword(), user.getPassword())) {
+	                return ResponseEntity.badRequest()
+	                        .body(new MessageResponse("Current password is incorrect"));
+	            }
+	            
+	            // Encode and set new password
+	            user.setPassword(encoder.encode(updateRequest.getNewPassword()));
+	        }
+	        
+	        // Save updated user
+	        user = userRepository.save(user);
+	        
+	        // CRITICAL: Generate new JWT token if email changed
+	        // The JWT contains the email as username, so we need a new token
+	        String newJwt = "";
+	        if (emailChanged) {
+	            newJwt = jwtUtils.generateJwtToken(user.getEmail(), user.getId(), user.getRole().name());
+	        }
+	        
+	        // Return updated user info with new token if email changed
+	        return ResponseEntity.ok(new JwtResponse(
+	                newJwt, // new token if email changed, empty string otherwise
+	                user.getId(),
+	                user.getName(),
+	                user.getEmail(),
+	                user.getRole()
+	        ));
+	        
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest()
+	                .body(new MessageResponse("Failed to update profile: " + e.getMessage()));
+	    }
+	}
+}
+>>>>>>> 7163893 (Update UserProfile)

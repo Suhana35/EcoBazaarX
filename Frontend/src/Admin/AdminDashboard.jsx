@@ -143,7 +143,7 @@ const AdminDashboard = () => {
             />
             <StatCard
               title="Total Revenue"
-              value={`$${totalRevenue.toFixed(2)}`}
+              value={`₹${totalRevenue.toFixed(2)}`}
               icon="💰"
               color="from-emerald-500 to-teal-400"
               change="From all completed orders"
@@ -213,7 +213,7 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-800">${order.totalAmount?.toFixed(2) || '0.00'}</p>
+                      <p className="font-semibold text-gray-800">₹{order.totalAmount?.toFixed(2) || '0.00'}</p>
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         order.status === 'delivered' ? 'bg-green-100 text-green-800' :
                         order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :

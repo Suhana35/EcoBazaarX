@@ -9,13 +9,11 @@ import {
   FiSearch,
   FiFilter,
   FiCalendar,
-  FiDollarSign,
   FiTrendingUp,
   FiAlertCircle,
   FiEye,
   FiEdit,
   FiRefreshCw,
-  FiDownload,
   FiBarChart2,
 } from "react-icons/fi";
 import { FaLeaf, FaShippingFast } from "react-icons/fa";
@@ -78,6 +76,7 @@ const SellerOrders = () => {
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [showOrderDetail, setShowOrderDetail] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Fetch seller data on component mount
   useEffect(() => {
@@ -223,7 +222,6 @@ const SellerOrders = () => {
       console.log(result);
       if (!result.success) {
         console.error("Failed to update order status:", result.message);
-        // Optionally show error message to user
       }
     } catch (error) {
       console.error("Error updating order status:", error);
@@ -284,9 +282,16 @@ const SellerOrders = () => {
   };
 
   const refreshOrders = async () => {
-    if (currentUser && currentUser.role === 'seller') {
-      await fetchOrdersBySeller(currentUser.id);
-      await fetchProductsBySeller(currentUser.id);
+    setIsRefreshing(true);
+    try {
+      if (currentUser && currentUser.role === 'seller') {
+        await fetchOrdersBySeller(currentUser.id);
+        await fetchProductsBySeller(currentUser.id);
+      }
+    } catch (error) {
+      console.error("Error refreshing orders:", error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -382,7 +387,6 @@ const SellerOrders = () => {
                   <span className="font-semibold">{order.orderItems.length}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <FiDollarSign className="text-green-500" size={14} />
                   <span className="text-gray-600">Total Qty:</span>
                   <span className="font-semibold">{order.quantity}</span>
                 </div>
@@ -530,20 +534,14 @@ const SellerOrders = () => {
                 </h1>
                 <p className="text-sky-100 text-lg">Track and manage orders for your products</p>
               </div>
-              <div className="flex gap-3">
-                <button className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-2xl transition-all duration-300">
-                  <FiDownload size={18} />
-                  <span className="hidden sm:inline">Export</span>
-                </button>
-                <button 
-                  onClick={refreshOrders}
-                  disabled={loading}
-                  className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-2xl transition-all duration-300 disabled:opacity-50"
-                >
-                  <FiRefreshCw size={18} className={loading ? "animate-spin" : ""} />
-                  <span className="hidden sm:inline">Refresh</span>
-                </button>
-              </div>
+              <button 
+                onClick={refreshOrders}
+                disabled={isRefreshing}
+                className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-2xl transition-all duration-300 disabled:opacity-50"
+              >
+                <FiRefreshCw size={18} className={isRefreshing ? "animate-spin" : ""} />
+                <span className="hidden sm:inline">Refresh</span>
+              </button>
             </div>
           </div>
           <div className="absolute -bottom-4 -right-4 text-white/10">
@@ -566,7 +564,7 @@ const SellerOrders = () => {
           <div className="group bg-white rounded-3xl shadow-lg hover:shadow-xl p-6 transition-all duration-300 transform hover:-translate-y-1 border border-green-100">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-gradient-to-br from-green-400 to-green-500 text-white rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <FiDollarSign size={24} />
+                <FiTrendingUp size={24} />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-gray-800">₹{stats.totalRevenue.toLocaleString()}</h2>

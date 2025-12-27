@@ -311,23 +311,14 @@ const Home = () => {
                     onClick={() => navigate(`/productInfo/${p.id}`)}
                   />
 
-                  {/* Overlay Actions */}
+                  {/* Overlay Actions - Only Eye Icon */}
                   <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                    <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
                       <button
                         onClick={() => navigate(`/productInfo/${p.id}`)}
                         className="bg-white text-gray-700 p-3 rounded-full hover:bg-[#00b4d8] hover:text-white transition-all duration-300 shadow-lg"
                       >
                         <FiEye />
-                      </button>
-                      <button
-                        onClick={() => toggleFavorite(p.id)}
-                        className={`p-3 rounded-full transition-all duration-300 shadow-lg ${favorites.has(p.id)
-                            ? "bg-red-500 text-white"
-                            : "bg-white text-gray-700 hover:bg-red-500 hover:text-white"
-                          }`}
-                      >
-                        <FiHeart />
                       </button>
                     </div>
                   </div>

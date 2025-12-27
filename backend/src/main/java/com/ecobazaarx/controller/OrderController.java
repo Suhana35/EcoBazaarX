@@ -173,6 +173,37 @@ public class OrderController {
 
         return ResponseEntity.ok(order);
     }
+    @PatchMapping("/{orderId}/status")
+    @PreAuthorize("hasRole('CONSUMER') or hasRole('ADMIN')")
+    public ResponseEntity<?> updateConsumerOrderStatus(
+            @PathVariable Long orderId,
+            @RequestParam String status,
+            HttpServletRequest request) {
+        try {
+            Long userId = getUserIdFromRequest(request);
+
+            // Validate status
+            OrderStatus orderStatus;
+            try {
+                orderStatus = OrderStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body("Invalid order status: " + status);
+            }
+
+            // Allow consumers to only change to "delivered" or "cancelled"
+            if (!orderStatus.equals(OrderStatus.DELIVERED) && !orderStatus.equals(OrderStatus.CANCELLED)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Consumers can only change status to 'delivered' or 'cancelled'");
+            }
+
+            OrderDto order = orderService.updateConsumerOrderStatus(orderId, userId, orderStatus);
+            return ResponseEntity.ok(order);
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
     
 
 }

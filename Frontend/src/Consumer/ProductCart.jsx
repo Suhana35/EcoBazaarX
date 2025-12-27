@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiTrash2, FiShoppingCart, FiMinus, FiPlus, FiArrowLeft, FiHeart, FiTruck, FiAward, FiCreditCard } from "react-icons/fi";
+import { FiTrash2, FiShoppingCart, FiMinus, FiPlus, FiArrowLeft, FiTruck, FiAward, FiCreditCard } from "react-icons/fi";
 import { FaRecycle, FaShieldAlt } from "react-icons/fa";
 import { FiSun } from "react-icons/fi";
 import { useGlobal } from "../context/GlobalContext";
@@ -12,7 +12,6 @@ const ProductCart = () => {
   const [showCheckout, setShowCheckout] = useState(false);
   const [checkoutProduct, setCheckoutProduct] = useState(null);
   const [checkoutQty, setCheckoutQty] = useState(1);
-  const [savedForLater, setSavedForLater] = useState([]);
 
   // quantity update - use item.id (cart item ID)
   const updateQuantity = (cartItemId, qty) => {
@@ -24,6 +23,7 @@ const ProductCart = () => {
     removeFromCart(cartItemId);
   };
 
+<<<<<<< HEAD
   // save for later - use entire cart item
   const saveForLater = (cartItem) => {
     setSavedForLater(prev => [...prev, cartItem]);
@@ -37,6 +37,9 @@ const ProductCart = () => {
   };
 
   // checkout handler
+=======
+  // Fixed checkout handler
+>>>>>>> 7163893 (Update UserProfile)
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
     
@@ -69,10 +72,9 @@ const ProductCart = () => {
   const shipping = subtotal > 50 ? 0 : 5.99;
   const totalCost = subtotal + shipping;
   const totalCO2 = cartItems.reduce((sum, item) => sum + ((item.product.materialCO2 + item.product.shippingCO2) * item.quantity), 0);
-  const ecoPoints = Math.round(totalCO2 * 0.1);
   const avgEcoScore = cartItems.length > 0 ? (cartItems.reduce((sum, item) => sum + item.product.ecoScore, 0) / cartItems.length).toFixed(1) : 0;
 
-  if (cartItems.length === 0 && savedForLater.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-cyan-50 py-12 px-4">
         <div className="max-w-4xl mx-auto">
@@ -134,15 +136,9 @@ const ProductCart = () => {
                     <FiSun className="text-green-500 text-xl" />
                     Your Eco Impact
                   </h3>
-                  <div className="grid grid-cols-2 gap-6 text-sm">
-                    <div>
-                      <span className="text-gray-600">Carbon Footprint:</span>
-                      <div className="font-bold text-green-600 text-lg">{totalCO2.toFixed(1)} kg CO₂</div>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Eco Points:</span>
-                      <div className="font-bold text-blue-600 text-lg">{ecoPoints} points</div>
-                    </div>
+                  <div className="text-sm">
+                    <span className="text-gray-600">Carbon Footprint:</span>
+                    <div className="font-bold text-green-600 text-lg">{totalCO2.toFixed(1)} kg CO₂</div>
                   </div>
                 </div>
                 <div className="text-center bg-white rounded-lg p-4 shadow-sm">
@@ -232,13 +228,6 @@ const ProductCart = () => {
 
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => saveForLater(item)}
-                            className="flex items-center gap-1 text-gray-500 hover:text-[#00b4d8] transition-colors duration-300 px-3 py-2 rounded-lg hover:bg-blue-50 font-medium"
-                          >
-                            <FiHeart className="text-sm" />
-                            <span className="text-sm">Save</span>
-                          </button>
-                          <button
                             onClick={() => removeProduct(item.id)}
                             className="flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors duration-300 px-3 py-2 rounded-lg hover:bg-red-50 font-medium"
                           >
@@ -252,35 +241,6 @@ const ProductCart = () => {
                 </div>
               ))}
             </div>
-
-            {/* Saved for Later */}
-            {savedForLater.length > 0 && (
-              <div className="mt-8">
-                <h3 className="text-xl font-bold text-[#03045e] mb-4 flex items-center gap-2">
-                  <FiHeart className="text-red-500" />
-                  Saved for Later ({savedForLater.length})
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {savedForLater.map((item) => (
-                    <div key={item.id} className="bg-white rounded-xl shadow-md p-4 border border-gray-100 hover:shadow-lg transition-shadow">
-                      <img
-                        src={item.product.image}
-                        alt={item.product.name}
-                        className="w-full h-32 object-cover rounded-lg mb-3"
-                      />
-                      <h4 className="font-semibold text-gray-800 mb-2">{item.product.name}</h4>
-                      <p className="text-[#03045e] font-bold mb-3">₹{item.product.price.toFixed(2)}</p>
-                      <button
-                        onClick={() => moveToCart(item)}
-                        className="w-full bg-[#00b4d8] text-white py-2 rounded-lg hover:bg-[#0077b6] transition-colors duration-300 text-sm font-medium"
-                      >
-                        Move to Cart
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Order Summary Sidebar */}
@@ -325,15 +285,9 @@ const ProductCart = () => {
                   <FaRecycle className="text-green-500" />
                   Environmental Impact
                 </h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-green-600">{totalCO2.toFixed(1)}</div>
-                    <div className="text-gray-600">kg CO₂ footprint</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-blue-600">{ecoPoints}</div>
-                    <div className="text-gray-600">Eco Points earned</div>
-                  </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-green-600">{totalCO2.toFixed(1)}</div>
+                  <div className="text-gray-600 text-sm">kg CO₂ footprint</div>
                 </div>
               </div>
 
