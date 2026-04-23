@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import API from "../api";
 import { FiMail, FiPhone, FiMapPin, FiSend, FiCheck, FiMessageSquare } from "react-icons/fi";
 import { FaLeaf } from "react-icons/fa";
 
@@ -78,12 +79,7 @@ const handleSubmit = async (e) => {
   }
   setLoading(true);
   try {
-    const response = await fetch("http://localhost:8080/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    if (!response.ok) throw new Error("Server error");
+    await API.post("/contact", form);
     setSubmitted(true);
   } catch (err) {
     alert("Failed to send message. Please try again.");

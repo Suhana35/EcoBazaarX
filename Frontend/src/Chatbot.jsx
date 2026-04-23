@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { FiX, FiSend, FiRefreshCw } from "react-icons/fi";
 import { FaLeaf } from "react-icons/fa";
 import { useGlobal } from "./context/GlobalContext";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
+import API from "./api";
 
 // ── Role config: welcome message + quick suggestions ─────────────────────────
 const ROLE_CONFIG = {
@@ -186,13 +185,7 @@ export default function Chatbot() {
     }
 
     try {
-      const res = await fetch(`${API_BASE}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiMessages }),
-      });
-      if (!res.ok) throw new Error(`${res.status}`);
-      const data = await res.json();
+      const { data } = await API.post("/chat", { messages: apiMessages });
       setMessages((prev) => {
         const updated = [...prev, { role: "assistant", content: data.reply }];
         setNewIdx(updated.length - 1);
