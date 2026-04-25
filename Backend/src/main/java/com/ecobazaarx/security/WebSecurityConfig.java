@@ -23,6 +23,7 @@ import com.ecobazaarx.security.jwt.AuthTokenFilter;
 import com.ecobazaarx.service.UserDetailsServiceImpl;
 
 import java.util.Arrays;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableWebSecurity
